@@ -1,0 +1,196 @@
+- id: '1582209235474'
+  name: Sundown
+  entities:
+    light.lamp:
+      friendly_name: Lamp
+      max_mireds: 500
+      min_mireds: 153
+      state: 'off'
+      supported_features: 43
+    switch.living_room_lamp:
+      friendly_name: Fairy lights
+      state: 'off'
+- id: '1598534787565'
+  name: Hallway night light
+  entities:
+    light.hallway_c:
+      brightness: 19
+      color_temp: 454
+      friendly_name: Hallway-c
+      is_deconz_group: false
+      max_mireds: 65279
+      min_mireds: 153
+      state: 'on'
+      supported_features: 43
+- id: '1610702781761'
+  name: Meeting mode
+  entities:
+    light.office_osram:
+      min_mireds: 140
+      max_mireds: 526
+      effect_list:
+      - colorloop
+      brightness: 178
+      hs_color:
+      - 44.835
+      - 71.373
+      rgb_color:
+      - 255
+      - 208
+      - 72
+      xy_color:
+      - 0.486
+      - 0.446
+      is_deconz_group: false
+      friendly_name: Bedroom 2 Lamp 2
+      supported_features: 63
+      state: 'on'
+    light.bedroom_2_lamp:
+      min_mireds: 140
+      max_mireds: 650
+      effect_list:
+      - colorloop
+      brightness: 254
+      hs_color:
+      - 195.178
+      - 99.216
+      rgb_color:
+      - 1
+      - 190
+      - 255
+      xy_color:
+      - 0.146
+      - 0.237
+      is_deconz_group: false
+      friendly_name: Bedroom 2 lamp
+      supported_features: 63
+      state: 'on'
+- id: '1616955175183'
+  name: Work mode
+  entities:
+    light.front_room_lamp:
+      min_mireds: 153
+      max_mireds: 454
+      brightness: 230
+      color_temp: 366
+      is_deconz_group: false
+      friendly_name: Front Room Lamp
+      supported_features: 43
+      state: 'on'
+- id: '1622980493297'
+  name: 'Alarm: Lights red/on'
+  entities:
+    light.hallway_light:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 254
+      color_temp: 278
+      is_deconz_group: true
+      all_on: true
+      friendly_name: Hallway Light
+      supported_features: 47
+      state: 'on'
+    light.landing_light:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 254
+      color_temp: 278
+      is_deconz_group: true
+      all_on: true
+      friendly_name: Landing Light
+      supported_features: 47
+      state: 'on'
+    light.nics_lamp:
+      min_mireds: 153
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 254
+      color_temp: 434
+      is_deconz_group: false
+      friendly_name: Nic's Lamp
+      supported_features: 43
+      state: 'on'
+    light.bedroom_2_lamp:
+      min_mireds: 140
+      max_mireds: 650
+      effect_list:
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: hs
+      brightness: 254
+      hs_color:
+      - 0
+      - 100
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      xy_color:
+      - 0.701
+      - 0.299
+      is_deconz_group: false
+      friendly_name: Bedroom 2 lamp
+      supported_features: 63
+      state: 'on'
+- id: '1622980557339'
+  name: 'Alarm: Lights off'
+  entities:
+    light.hallway_light:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      is_deconz_group: true
+      all_on: false
+      friendly_name: Hallway Light
+      supported_features: 47
+      state: 'off'
+    light.landing_light:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      is_deconz_group: true
+      all_on: false
+      friendly_name: Landing Light
+      supported_features: 47
+      state: 'off'
+    light.nics_lamp:
+      min_mireds: 153
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      is_deconz_group: false
+      friendly_name: Nic's Lamp
+      supported_features: 43
+      state: 'off'
+    light.bedroom_2_lamp:
+      min_mireds: 140
+      max_mireds: 650
+      effect_list:
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - hs
+      is_deconz_group: false
+      friendly_name: Bedroom 2 lamp
+      supported_features: 63
+      state: 'off'
