@@ -86,7 +86,7 @@
     entity_id: binary_sensor.office_motion_sensor
     for:
       hours: 0
-      minutes: 10
+      minutes: 1
       seconds: 0
     platform: device
     type: no_motion
@@ -1413,7 +1413,7 @@
     data_template:
       entity_id: climate.heating
       hvac_mode: heat
-      temperature: 15
+      temperature: '{{ states(''input_number.heating_temperature_low'')|float(1) }}'
   - service: input_boolean.turn_off
     data: {}
     target:
@@ -1421,6 +1421,15 @@
       - input_boolean.hallway_switch
       - input_boolean.landing_switch
       - input_boolean.office_switch
+  - service: media_player.media_stop
+    data: {}
+    target:
+      device_id:
+      - f1751819001a11eb82537d768fa74256
+      - f9dae99c8ceb953b6c6d3c675db8dc8c
+      - acad7818311b72a91cea03d2e9a1efb4
+      - 788017a299f1932593cc9112229f7e46
+      - ea58cedf001a11eb91b9d3e203a5f991
   mode: single
 - id: '1601210365017'
   alias: Play client playlist
@@ -2171,9 +2180,8 @@
     domain: binary_sensor
     for:
       hours: 0
-      minutes: 5
+      minutes: 2
       seconds: 0
-      milliseconds: 0
   - condition: state
     entity_id: input_boolean.office_switch
     state: 'off'
@@ -2591,4 +2599,72 @@
     data: {}
     target:
       device_id: dddc3d2c7f83015c1b3f9a4484e07dad
+  mode: single
+- id: '1646743109177'
+  alias: 'Bedroom: lights off of nobody there'
+  description: ''
+  trigger:
+  - platform: state
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    entity_id: binary_sensor.bedroom1_occupied
+  condition:
+  - condition: state
+    entity_id: input_boolean.office_switch
+    state: 'off'
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id:
+      - 0aaaf16d380548268839a3e4a5aa6fde
+      - eebf5afcc2954c2382c8477da3c67293
+  mode: single
+- id: '1646748528398'
+  alias: 'Kitchen: Good morning routine'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.kitchen_occupied
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: group.all_people
+    state: home
+  - condition: time
+    after: 08:00:00
+    before: '21:00:00'
+    weekday: []
+  action:
+  - choose:
+    - conditions:
+      - condition: device
+        device_id: 788017a299f1932593cc9112229f7e46
+        domain: media_player
+        entity_id: media_player.kitchen_display_2
+        type: is_playing
+      sequence: []
+    default:
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.kitchen_display_2
+      data:
+        media_content_id: media-source://radio_browser/832afff5-fa6a-4bf6-9cf3-6a70e410910d
+        media_content_type: audio/aac
+      metadata:
+        title: BBC Radio 2
+        thumbnail: https://rmp.files.bbci.co.uk/playspace/img/apple-touch-icon.96d5401f35.png
+        media_class: music
+        children_media_class:
+        navigateIds:
+        - {}
+        - media_content_type: app
+          media_content_id: media-source://radio_browser
+        - media_content_type: music
+          media_content_id: media-source://radio_browser/country/GB
   mode: single
