@@ -78,7 +78,7 @@
     service: input_boolean.turn_off
   mode: single
 - id: '1582058135722'
-  alias: Office light off if no motion
+  alias: 'Office: light off if no motion'
   description: ''
   trigger:
   - device_id: 8d5841e4ce314e8bb733d50a3cc3fd38
@@ -86,22 +86,23 @@
     entity_id: binary_sensor.office_motion_sensor
     for:
       hours: 0
-      minutes: 1
+      minutes: 25
       seconds: 0
     platform: device
     type: no_motion
   condition:
   - condition: state
     entity_id: binary_sensor.office_occupied
-    state: 'off'
-  - condition: state
-    entity_id: input_boolean.office_switch
-    state: 'off'
+    state: 'on'
   action:
-  - type: turn_off
-    device_id: 51a9935d708e4e8345ac39d010b1f56c
-    entity_id: light.dimmable_light_23
-    domain: light
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id: 51a9935d708e4e8345ac39d010b1f56c
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.office_switch
   mode: single
 - id: '1582122642384'
   alias: Turn off Nic's charger
@@ -687,7 +688,7 @@
     domain: light
   mode: single
 - id: '1591378827967'
-  alias: Office light on if motion
+  alias: 'Office: light on if motion'
   description: ''
   trigger:
   - device_id: 8d5841e4ce314e8bb733d50a3cc3fd38
@@ -709,11 +710,11 @@
     entity_id: input_boolean.visitor_mode
     state: 'off'
   action:
-  - type: turn_on
-    device_id: 51a9935d708e4e8345ac39d010b1f56c
-    entity_id: light.dimmable_light_23
-    domain: light
-    brightness_pct: 100
+  - service: light.turn_on
+    data:
+      brightness_pct: 100
+    target:
+      device_id: 51a9935d708e4e8345ac39d010b1f56c
   mode: single
 - id: '1591444531607'
   alias: Front room - Lights on over night
@@ -1637,7 +1638,7 @@
       time: '10:30:00'
       threshold: 30
 - id: '1612365802968'
-  alias: Office Light - toggle on/off
+  alias: 'Office: Light toggle on/off'
   description: ''
   trigger:
   - device_id: 3d2f9f2d701fa5d784c6d812a338211a
@@ -1647,14 +1648,11 @@
     subtype: turn_on
   condition: []
   action:
-  - type: toggle
-    device_id: 7f73b712e2674cb6ba875f3a48a6311c
-    entity_id: light.office_light
-    domain: light
-  - type: toggle
-    device_id: 51a9935d708e4e8345ac39d010b1f56c
-    entity_id: light.dimmable_light_23
-    domain: light
+  - service: light.toggle
+    data:
+      brightness_pct: 100
+    target:
+      device_id: 51a9935d708e4e8345ac39d010b1f56c
   mode: single
 - id: '1615207452709'
   alias: When Jo comes home
@@ -2161,7 +2159,7 @@
       device_id: 67c79aab58f331019354a0d729b33e4f
   mode: single
 - id: '1638710630056'
-  alias: Office light off of nobody there
+  alias: 'Office: light off of nobody there'
   description: ''
   trigger:
   - platform: state
@@ -2186,10 +2184,10 @@
     entity_id: input_boolean.office_switch
     state: 'off'
   action:
-  - type: turn_off
-    device_id: 51a9935d708e4e8345ac39d010b1f56c
-    entity_id: light.dimmable_light_23
-    domain: light
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id: 51a9935d708e4e8345ac39d010b1f56c
   mode: single
 - id: '1639497870677'
   alias: 'Front Door: Flash lights if doorbell pressed'
