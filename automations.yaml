@@ -92,8 +92,8 @@
     type: no_motion
   condition:
   - condition: state
-    entity_id: binary_sensor.office_occupied
     state: 'on'
+    entity_id: input_boolean.office_switch
   action:
   - service: light.turn_off
     data: {}
@@ -1075,36 +1075,6 @@
       brightness_pct: 10
       kelvin: 2200
   mode: single
-- id: '1598540953342'
-  alias: Landing Light - Turn on nightlight
-  description: ''
-  trigger:
-  - device_id: b731113ae2c043498790888fd4edf1df
-    domain: binary_sensor
-    entity_id: binary_sensor.presence_25
-    platform: device
-    type: motion
-  - device_id: 32e295441bbb4504b5285f513b0cb8c3
-    domain: binary_sensor
-    entity_id: binary_sensor.presence_31
-    platform: device
-    type: motion
-  condition:
-  - after: '23:30'
-    condition: time
-  - before: sunrise
-    before_offset: -01:00:00
-    condition: sun
-  action:
-  - brightness_pct: 10
-    device_id: d54a5563aa864a8ea3bfc33036b4db45
-    domain: light
-    entity_id: light.landing_b
-    type: turn_on
-  - data: {}
-    entity_id: input_boolean.landing_motion
-    service: input_boolean.turn_on
-  mode: single
 - id: '1598541576073'
   alias: Hallway Light Switch - double click
   description: ''
@@ -1757,8 +1727,8 @@
   trigger:
   - type: motion
     platform: device
-    device_id: b731113ae2c043498790888fd4edf1df
-    entity_id: binary_sensor.presence_25
+    device_id: 5bd1f4733417a1ac4494810c532d3ef3
+    entity_id: binary_sensor.new_landing_motion_sensor
     domain: binary_sensor
   condition:
   - condition: state
@@ -2333,87 +2303,6 @@
     data:
       value: 21
   mode: single
-- id: '1643831155481'
-  alias: 'Landing: Light on with motion (backup)'
-  description: ''
-  trigger:
-  - device_id: 32e295441bbb4504b5285f513b0cb8c3
-    domain: binary_sensor
-    entity_id: binary_sensor.presence_31
-    platform: device
-    type: motion
-  - device_id: b731113ae2c043498790888fd4edf1df
-    domain: binary_sensor
-    entity_id: binary_sensor.presence_25
-    platform: device
-    type: motion
-  - type: motion
-    platform: device
-    device_id: 5bd1f4733417a1ac4494810c532d3ef3
-    entity_id: binary_sensor.new_landing_motion_sensor
-    domain: binary_sensor
-  condition:
-  - condition: and
-    conditions:
-    - before: '23:00'
-      condition: time
-      after: 08:00
-    - type: is_illuminance
-      condition: device
-      device_id: 178f8729d6ed45809a63512fe1af358f
-      entity_id: sensor.garden_motion_sensor_2
-      domain: sensor
-      below: 400
-  action:
-  - service: light.turn_on
-    target:
-      device_id: ce1b33b8a0194c6097d58d588433a188
-    data: {}
-  mode: single
-- id: '1643831207552'
-  alias: 'Landing: Light off when no motion (backup)'
-  description: ''
-  trigger:
-  - device_id: 32e295441bbb4504b5285f513b0cb8c3
-    domain: binary_sensor
-    entity_id: binary_sensor.presence_31
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 40
-    platform: device
-    type: no_motion
-  - type: no_motion
-    platform: device
-    device_id: b731113ae2c043498790888fd4edf1df
-    entity_id: binary_sensor.presence_25
-    domain: binary_sensor
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 40
-  - type: no_motion
-    platform: device
-    device_id: 5bd1f4733417a1ac4494810c532d3ef3
-    entity_id: binary_sensor.new_landing_motion_sensor
-    domain: binary_sensor
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 10
-  condition:
-  - condition: and
-    conditions:
-    - condition: state
-      entity_id: input_boolean.landing_switch
-      state: 'off'
-  action:
-  - service: light.turn_off
-    data:
-      transition: 2
-    target:
-      device_id: ce1b33b8a0194c6097d58d588433a188
-  mode: single
 - id: '1644418788587'
   alias: 'Landing: Light toggle with switch (backup)'
   description: ''
@@ -2665,4 +2554,34 @@
           media_content_id: media-source://radio_browser
         - media_content_type: music
           media_content_id: media-source://radio_browser/country/GB
+  mode: single
+- id: '1647072239378'
+  alias: 'Office: light off if no motion short'
+  description: ''
+  trigger:
+  - device_id: 8d5841e4ce314e8bb733d50a3cc3fd38
+    domain: binary_sensor
+    entity_id: binary_sensor.office_motion_sensor
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    platform: device
+    type: no_motion
+  condition:
+  - condition: state
+    state: 'off'
+    entity_id: input_boolean.office_switch
+  - condition: state
+    entity_id: binary_sensor.office_occupied
+    state: 'off'
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id: 51a9935d708e4e8345ac39d010b1f56c
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.office_switch
   mode: single
