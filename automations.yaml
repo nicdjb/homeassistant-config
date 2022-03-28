@@ -2585,3 +2585,35 @@
     target:
       entity_id: input_boolean.office_switch
   mode: single
+- id: '1647191140478'
+  alias: 'Alarm: Motion detected'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: group.motion_detected
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.alarmed
+    state: 'on'
+  action:
+  - service: notify.mobile_app_nbiphone
+    data:
+      message: Motion detected in the house!
+      title: Alarm triggered!
+  mode: single
+- id: '1647362002898'
+  alias: 'Laundry: Motion detected'
+  description: ''
+  trigger:
+  - type: motion
+    platform: device
+    device_id: b731113ae2c043498790888fd4edf1df
+    entity_id: binary_sensor.presence_25
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: notify.mobile_app_nbiphone
+    data:
+      message: Motion detected in the laundry room!
+  mode: single
