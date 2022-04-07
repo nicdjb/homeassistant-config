@@ -33,7 +33,7 @@
   action:
   - type: turn_on
     device_id: ee94e62253723cad2037ec638b48f7bf
-    entity_id: switch.on_off_plug_in_unit_33
+    entity_id: switch.nics_phone_charger
     domain: switch
   mode: single
 - id: '1581891646677'
@@ -54,6 +54,10 @@
     entity_id: binary_sensor.livingroom_occupied
     from: 'on'
     to: 'off'
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
   condition:
   - condition: state
     entity_id: input_boolean.visitor_mode
@@ -73,6 +77,7 @@
   - service: light.turn_off
     target:
       device_id: 0f6529e9437e4761b9c093618c2706ea
+    data: {}
   - data: {}
     entity_id: input_boolean.frontroomlamp_auto
     service: input_boolean.turn_off
@@ -94,6 +99,13 @@
   - condition: state
     state: 'on'
     entity_id: input_boolean.office_switch
+  - condition: state
+    entity_id: binary_sensor.office_occupied
+    state: 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
   action:
   - service: light.turn_off
     data: {}
@@ -2575,6 +2587,10 @@
   - condition: state
     entity_id: binary_sensor.office_occupied
     state: 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
   action:
   - service: light.turn_off
     data: {}
@@ -2616,4 +2632,31 @@
   - service: notify.mobile_app_nbiphone
     data:
       message: Motion detected in the laundry room!
+  mode: single
+- id: '1648635927699'
+  alias: 'Hallway: Front door bell pressed'
+  description: ''
+  trigger:
+  - type: occupied
+    platform: device
+    device_id: 4eacb35916ea481bbe4f767ac7c527f7
+    entity_id: binary_sensor.front_doorbell_ding
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_display
+    data:
+      media_content_id: media-source://camera/camera.front_doorbell
+      media_content_type: image/jpeg
+    metadata:
+      title: Front Door
+      thumbnail: /api/camera_proxy/camera.front_doorbell
+      media_class: video
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://camera
   mode: single
