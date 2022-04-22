@@ -221,12 +221,6 @@
   condition:
   - condition: and
     conditions:
-    - type: is_temperature
-      condition: device
-      device_id: 5676ee78d6fa4c61b5395b4e961112e8
-      entity_id: sensor.front_room_motion_sensor
-      domain: sensor
-      below: 19
     - condition: or
       conditions:
       - condition: state
@@ -1814,7 +1808,7 @@
     target:
       device_id: 0f6529e9437e4761b9c093618c2706ea
     data:
-      transition: 120
+      transition: 0
   - data: {}
     entity_id: input_boolean.frontroomlamp_auto
     service: input_boolean.turn_off
@@ -2641,6 +2635,11 @@
     platform: device
     device_id: 4eacb35916ea481bbe4f767ac7c527f7
     entity_id: binary_sensor.front_doorbell_ding
+    domain: binary_sensor
+  - type: vibration
+    platform: device
+    device_id: b8abdce5f16e43a48c82fe8cfa0007e4
+    entity_id: binary_sensor.front_door_vibration
     domain: binary_sensor
   condition: []
   action:
