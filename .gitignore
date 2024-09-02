@@ -8,6 +8,10 @@ secrets.yaml
 .storage/
 image/
 zigbee2mqtt/
+custom_components/
+www/
+tts/
+esphome/
 .cloud/
 OZW_Log.txt
 harmony_harmony_hub.conf
