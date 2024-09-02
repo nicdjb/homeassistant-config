@@ -2305,21 +2305,6 @@
       target:
         entity_id: switch.christmas_lights
   mode: single
-- id: '1674382942886'
-  alias: 'Bedroom: Update TRV temperature'
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.living_room_temperature_temperature
-  condition: []
-  action:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Living Room Thermostat/set/sensor_temp
-      payload_template: '{{ (states(''sensor.living_room_temperature_temperature'')|float(0)|round(1))
-        }}'
-  mode: single
 - id: '1679999778799'
   alias: 'Living Room: Volume down when cube rotated left'
   description: ''
