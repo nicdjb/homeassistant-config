@@ -1,0 +1,74 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.0.21
+    - 192.168.0.216
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+zone:
+  - name: Home
+    latitude: 51.441581
+    longitude: -2.605544
+    radius: 80
+    icon: mdi:account-multiple
+
+sensor:
+  - platform: time_date
+    display_options:
+      - "time"
+      - "date"
+      - "date_time"
+      - "date_time_utc"
+      - "date_time_iso"
+      - "time_date"
+      - "time_utc"
+
+  - platform: template
+    sensors:
+      uptime_minutes:
+        friendly_name: UpTime Minutes
+        value_template: >
+          {{ (as_timestamp(now()) - as_timestamp(states('sensor.uptime'))) // 60| round (0)  }}
+
+input_number:
+  heating_temperature:
+    name: Temperature
+    initial: 21
+    min: 15
+    max: 27
+    step: 0.5
+    icon: mdi:thermometer
+
+input_boolean:
+  occupancy:
+    name: Occupancy
+    icon: mdi:beach
+
+template:
+  - sensor:
+      - name: "Supply Charge"
+        unit_of_measurement: "kWh"
+        device_class: energy
+        state_class: total_increasing
+        state: >-
+          {{ (((as_timestamp(states('sensor.date_time_iso')) / 3600)-454585) | int) / 1000}}
+        attributes:
+          last_reset: "1970-01-01T00:00:00+00:00"
+
+notify:
+  - name: All_Phones
+    platform: group
+    services:
+      - service: mobile_app_nbiphone
+      - service: mobile_app_iphone_5
