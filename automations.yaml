@@ -56,7 +56,7 @@
     service: input_boolean.turn_off
   mode: single
 - id: '1582058135722'
-  alias: 'Office: light off if no one there'
+  alias: 'Viewing room: light off if no one there'
   description: ''
   trigger:
   - type: not_occupied
@@ -64,16 +64,17 @@
     device_id: bf9d6b08c263d2084dd7b66b4a5bd82e
     entity_id: binary_sensor.occupancy
     domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 0
   condition: []
   action:
-  - service: input_boolean.turn_off
-    data: {}
+  - data: {}
     target:
-      entity_id: input_boolean.office_switch
-  - service: light.turn_off
-    data: {}
-    target:
-      device_id: a6f6615c257b840eb22de7c5e514ed0d
+      device_id:
+      - 00cd6d38ebbb9e44e6c3419bcdb66c4e
+    action: light.turn_off
   mode: single
 - id: '1582235724050'
   alias: 'Living Room: Lights on if motion'
@@ -2157,22 +2158,23 @@
       entity_id: input_boolean.desk_button_hold
       state: 'on'
     then:
-    - service: input_boolean.turn_off
-      metadata: {}
+    - metadata: {}
       data: {}
       target:
         entity_id: input_boolean.desk_button_hold
-    - service: light.toggle
-      metadata: {}
+      action: input_boolean.turn_off
+    - metadata: {}
       data: {}
       target:
-        device_id: a63f82213575a55a71e41f0e932f83eb
+        device_id:
+        - 5cc63bc735fa621201d3d1517e600ea5
+      action: light.toggle
     else:
-    - service: light.toggle
-      metadata: {}
+    - metadata: {}
       data: {}
       target:
         device_id: 399c5c888afdb3c9dffcd4b838cd573d
+      action: light.toggle
   mode: single
 - id: '1665405276729'
   alias: 'Office: Turn off light if Jo not home'
@@ -2473,7 +2475,7 @@
       action: media_player.media_pause
     else:
     - data:
-        media_content_id: 'plex://{ "library_name": "Music", "playlist_name": "Favourites",
+        media_content_id: 'plex://{ "library_name": "Music", "playlist_name": "Client",
           "shuffle":"1" }'
         media_content_type: playlist
       target:
@@ -2726,15 +2728,14 @@
     minutes: '0'
   condition: []
   action:
-  - service: switch.toggle
-    target:
+  - target:
       device_id:
       - a51e769814508cfed611e665f63b19b8
       - c650b505e8cc6588779660c99cd2c775
       - 44be459635a31d963bb15bb90adfb8ea
       - fce6eca44e76d0ae93394e53d07d5c7d
-      - 5cc63bc735fa621201d3d1517e600ea5
     data: {}
+    action: switch.toggle
   mode: single
 - id: '1703256971051'
   alias: 'Laundry Room: Washing machine door is closed'
@@ -2945,11 +2946,12 @@
     subtype: single_left
   condition: []
   action:
-  - service: light.toggle
-    metadata: {}
+  - metadata: {}
     data: {}
     target:
-      device_id: a63f82213575a55a71e41f0e932f83eb
+      device_id:
+      - 5cc63bc735fa621201d3d1517e600ea5
+    action: light.toggle
   mode: single
 - id: '1713171436548'
   alias: 'Hallway: Front doorbell pressed'
@@ -3198,4 +3200,33 @@
     data: {}
     target:
       device_id: a3d4745a63a7dc739442b83176e308d3
+  mode: single
+- id: '1725805665645'
+  alias: 'The Box Office: Toggle auto desk light'
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: a4b8c4032b2b0dacff1c4d62e9bf0829
+    type: action
+    subtype: double_left
+  condition: []
+  action:
+  - action: automation.toggle
+    target:
+      entity_id:
+      - automation.bedroom_2_desk_occupied_in_low_light
+    data: {}
+  - if:
+    - condition: device
+      type: is_on
+      device_id: 399c5c888afdb3c9dffcd4b838cd573d
+      entity_id: 1214295ce67a9ec4bc50d0727702b8d6
+      domain: light
+    then:
+    - action: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        device_id: 399c5c888afdb3c9dffcd4b838cd573d
   mode: single
