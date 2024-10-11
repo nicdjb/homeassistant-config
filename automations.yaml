@@ -3230,3 +3230,20 @@
       target:
         device_id: 399c5c888afdb3c9dffcd4b838cd573d
   mode: single
+- id: '1726222089209'
+  alias: 'Home: Odin2 battery level low'
+  description: ''
+  trigger:
+  - type: battery_level
+    platform: device
+    device_id: a7f2ac775e35e5e57db4fccf71708223
+    entity_id: 3d5b132265da212b274c01f7c1c2af22
+    domain: sensor
+    below: 20
+  condition: []
+  action:
+  - action: notify.mobile_app_nbiphone
+    metadata: {}
+    data:
+      message: Charge the Odin!
+  mode: single
