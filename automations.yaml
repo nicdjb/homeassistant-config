@@ -3247,3 +3247,21 @@
     data:
       message: Charge the Odin!
   mode: single
+- id: '1728908464768'
+  alias: 'Garden: Motion detected'
+  description: ''
+  triggers:
+  - type: occupied
+    device_id: 5dd737db95f79d9c04acf4c60b28ac93
+    entity_id: 65f5b3eff2d64b829473867a75042835
+    domain: binary_sensor
+    trigger: device
+  conditions:
+  - condition: state
+    entity_id: group.family
+    state: home
+  actions:
+  - action: notify.mobile_app_nbiphone
+    data:
+      message: Garden motion detected
+  mode: single
