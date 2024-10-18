@@ -1469,15 +1469,15 @@
 - id: '1651834086375'
   alias: 'Bedroom: Jo''s lamp toggle'
   description: ''
-  trigger:
-  - platform: device
-    domain: mqtt
+  triggers:
+  - domain: mqtt
     device_id: 24f65f95e1fe01802783ee5d3c75b163
     type: action
     subtype: release
     discovery_id: 0x00178801089322ea action_release
-  condition: []
-  action:
+    trigger: device
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: time
@@ -1488,27 +1488,28 @@
         entity_id: light.jo_s_lamp
         domain: light
       sequence:
-      - service: light.turn_on
-        data:
+      - data:
           brightness_pct: 10
           color_temp: 410
         target:
           device_id: a3d4745a63a7dc739442b83176e308d3
+        action: light.turn_on
     - conditions:
       - condition: time
         after: 07:00:00
+        before: '22:00:00'
       - condition: device
         type: is_off
         device_id: a3d4745a63a7dc739442b83176e308d3
         entity_id: light.jo_s_lamp
         domain: light
       sequence:
-      - service: light.turn_on
-        data:
+      - data:
           brightness_pct: 60
           color_temp: 411
         target:
           device_id: a3d4745a63a7dc739442b83176e308d3
+        action: light.turn_on
     - conditions:
       - condition: device
         type: is_on
@@ -1516,10 +1517,10 @@
         entity_id: light.jo_s_lamp
         domain: light
       sequence:
-      - service: light.turn_off
-        data: {}
+      - data: {}
         target:
           device_id: a3d4745a63a7dc739442b83176e308d3
+        action: light.turn_off
       - if:
         - condition: device
           type: is_off
@@ -1527,11 +1528,25 @@
           entity_id: light.nic_s_lamp
           domain: light
         then:
-        - service: timer.start
-          data: {}
+        - data: {}
           target:
             entity_id: timer.fan_countdown
-    default: []
+          action: timer.start
+    - conditions:
+      - condition: time
+        after: '22:00:00'
+      - condition: device
+        type: is_off
+        device_id: a3d4745a63a7dc739442b83176e308d3
+        entity_id: 9d593886d03ea905dc60323261f55cfc
+        domain: light
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 40
+        target:
+          device_id: a3d4745a63a7dc739442b83176e308d3
   mode: single
 - id: '1651834448521'
   alias: 'Bedroom: Nic''s lamp toggle'
@@ -2612,13 +2627,13 @@
 - id: '1688659514010'
   alias: 'The Box Office: Desk occupied in low light'
   description: ''
-  trigger:
+  triggers:
   - type: motion
-    platform: device
     device_id: 1d2981c0871b3ba69d8f0b5d7377d611
     entity_id: e5f46c44934e38f41cc20814240d5a94
     domain: binary_sensor
-  condition:
+    trigger: device
+  conditions:
   - condition: time
     after: 08:00:00
     before: '21:00:00'
@@ -2631,7 +2646,8 @@
     entity_id: 04ecb25c72f7e53c3c5a935a4547636e
     domain: sensor
     below: 70
-  action:
+    enabled: false
+  actions:
   - if:
     - condition: device
       type: is_off
@@ -2639,11 +2655,11 @@
       entity_id: switch.desk_lightbar
       domain: switch
     then:
-    - service: light.turn_on
-      metadata: {}
+    - metadata: {}
       data: {}
       target:
         device_id: 399c5c888afdb3c9dffcd4b838cd573d
+      action: light.turn_on
   mode: single
 - id: '1696004999271'
   alias: 'Bedroom 2: Lamp dimmer'
