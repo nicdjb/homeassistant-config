@@ -20,6 +20,8 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
+adaptive_lighting:
+  
 zone:
   - name: Home
     latitude: 51.441581
