@@ -595,13 +595,13 @@
 - id: '1598533211948'
   alias: 'Hallway: Light on with motion'
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.all_hallway_motion
     from: 'off'
     to: 'on'
-  condition:
+    trigger: state
+  conditions:
   - condition: and
     conditions:
     - before: '23:00'
@@ -613,11 +613,11 @@
       entity_id: sensor.garden_motion_illuminance_lux
       domain: sensor
       below: 120
-  action:
-  - service: light.turn_on
-    data: {}
+  actions:
+  - data: {}
     target:
       device_id: 943822b0a57e615f77fd0b34e041467a
+    action: light.turn_on
   mode: single
 - id: '1598533309311'
   alias: 'Hallway: Turn off if no motion'
@@ -710,13 +710,13 @@
 - id: '1599823238686'
   alias: 'Landing: Light on with motion'
   description: ''
-  trigger:
+  triggers:
   - type: occupied
-    platform: device
     device_id: 9755de96e4654fa2277199334e0ae807
     entity_id: 123980784a66dfd24b7aa21745858530
     domain: binary_sensor
-  condition:
+    trigger: device
+  conditions:
   - condition: and
     conditions:
     - before: '23:00'
@@ -728,7 +728,7 @@
       entity_id: sensor.garden_motion_illuminance_lux
       domain: sensor
       below: 120
-  action:
+  actions:
   - data: {}
     target:
       device_id:
@@ -1692,15 +1692,15 @@
 - id: '1651848896226'
   alias: 'Landing: Toggle light'
   description: ''
-  trigger:
-  - platform: device
-    domain: mqtt
+  triggers:
+  - domain: mqtt
     device_id: b9e7e30b4977455cb1b446754de3a932
     type: action
     subtype: release
     discovery_id: 0x00178801089380f8 action_release
-  condition: []
-  action:
+    trigger: device
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: state
@@ -1785,50 +1785,21 @@
 - id: '1652121846019'
   alias: 'Bedroom 2: Lamp wall toggle'
   description: ''
-  trigger:
-  - platform: device
-    domain: mqtt
+  triggers:
+  - domain: mqtt
     device_id: 6a88a653fcf43f975fca9cd0a42cc234
     type: action
     subtype: single_right
     discovery_id: 0x54ef441000245db0 action_single_right
-  condition: []
-  action:
-  - service: switch.toggle
-    data: {}
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    data:
+      brightness_pct: 40
     target:
-      entity_id:
-      - switch.bedroom_2_light_right
-  - if:
-    - condition: device
-      type: is_off
-      device_id: 6a88a653fcf43f975fca9cd0a42cc234
-      entity_id: switch.bedroom_2_light_right
-      domain: switch
-    then:
-    - service: light.turn_on
-      data:
-        color_temp: 388
-        brightness_pct: 40
-        transition: 1
-      target:
-        device_id:
-        - b38f097567ed18b2b191dcdcbe08933b
-    - service: light.turn_on
-      data:
-        color_temp: 370
-        brightness: 20
-        transition: 1
-      target:
-        device_id: 5e22506b6919deb4614f9dbd27689d28
-    else:
-    - service: light.turn_off
-      data:
-        transition: 1
-      target:
-        device_id:
-        - b38f097567ed18b2b191dcdcbe08933b
-        - 5e22506b6919deb4614f9dbd27689d28
+      device_id: b38f097567ed18b2b191dcdcbe08933b
   mode: single
 - id: '1652431394546'
   alias: 'Laundry Room: Washing done'
@@ -3276,8 +3247,74 @@
   - condition: state
     entity_id: group.family
     state: home
+  - condition: time
+    after: 07:00:00
+    before: '23:00:00'
   actions:
-  - action: notify.mobile_app_nbiphone
+  - action: notify.all_phones
+    metadata: {}
     data:
       message: Garden motion detected
+  mode: single
+- id: '1730461058525'
+  alias: 'Home: Dynamic lighting'
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    minutes: /15
+  conditions: []
+  actions:
+  - action: adaptive_lighting.apply
+    metadata: {}
+    data:
+      lights:
+      - light.hallway_light
+      - light.landing_light
+      - light.bathroom_landing_light
+      adapt_brightness: true
+      adapt_color: true
+  mode: single
+- id: '1730485131941'
+  alias: 'Home: Call Adaptive lighting'
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: a94a999f4e1d4b03fc61756153538c57
+    entity_id: 07ba2e065b8a0474246b19c440089c63
+    domain: light
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
+  - type: turned_on
+    device_id: 943822b0a57e615f77fd0b34e041467a
+    entity_id: 718f7b50d23b378bcf4a83f59261eb06
+    domain: light
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
+  - type: turned_on
+    device_id: 0eb92d3c8641e653d9dbd75084fb7aac
+    entity_id: c29968658112a29bba4334ece6354972
+    domain: light
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
+  conditions: []
+  actions:
+  - action: adaptive_lighting.apply
+    metadata: {}
+    data:
+      lights:
+      - light.hallway_light
+      - light.landing_light
+      - light.bathroom_landing_light
+      adapt_brightness: true
+      adapt_color: true
+      transition: '2'
   mode: single
