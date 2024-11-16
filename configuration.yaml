@@ -77,7 +77,7 @@ notify:
     platform: group
     services:
       - service: mobile_app_nbiphone
-      - service: mobile_app_iphone_5
+      - service: mobile_app_joiphone
 
 switch:
   - platform: flux
