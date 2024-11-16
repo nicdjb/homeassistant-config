@@ -3318,3 +3318,30 @@
       adapt_color: true
       transition: '2'
   mode: single
+- id: '1731762208284'
+  alias: 'Bedroom 2: Window motion detected'
+  description: ''
+  triggers:
+  - type: occupied
+    device_id: f23441f0950749375ec3a64800b2ca23
+    entity_id: 902d8702aaafda4192d278e1d3a45080
+    domain: binary_sensor
+    metadata:
+      secondary: false
+    trigger: device
+  conditions:
+  - type: is_not_open
+    condition: device
+    device_id: 9629b9883a701de6b755a9e033eb76fb
+    entity_id: 8e47f7dc3b76eb0853fbba0c6bd25126
+    domain: binary_sensor
+    enabled: false
+  - condition: time
+    after: 07:00:00
+    before: '23:00:00'
+  actions:
+  - action: notify.all_phones
+    metadata: {}
+    data:
+      message: There is motion at the back bedroom window
+  mode: single
