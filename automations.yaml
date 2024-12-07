@@ -146,10 +146,10 @@
 - id: '1582477550096'
   alias: 'Home: Set daytime heating'
   description: ''
-  trigger:
+  triggers:
   - at: 06:45
-    platform: time
-  condition:
+    trigger: time
+  conditions:
   - condition: and
     conditions:
     - condition: or
@@ -160,12 +160,12 @@
       - condition: state
         entity_id: input_boolean.visitor_mode
         state: 'on'
-  action:
-  - service: climate.turn_on
-    data: {}
+  actions:
+  - data: {}
     target:
       device_id:
       - 5c78c99d1637fbdead9867a7f0aa1ab5
+    action: climate.turn_on
   - repeat:
       count: '5'
       sequence:
@@ -182,29 +182,24 @@
             entity_id: climate.heating_thermostat
             hvac_mode: heat
             temperature: '{{ states(''input_number.heating_temperature'')|float }}'
-          service: climate.set_temperature
+          action: climate.set_temperature
         - delay:
             hours: 0
             minutes: 0
             seconds: 30
             milliseconds: 0
-  - service: climate.set_temperature
-    data:
-      temperature: 18
-    target:
-      device_id: b2361f33be6a562214be368551925275
-    enabled: false
   - if:
     - condition: state
-      entity_id: group.all_people
+      entity_id: group.family
       state: home
     then:
-    - service: climate.set_temperature
-      data:
-        temperature: 21
+    - data:
+        temperature: 22
         hvac_mode: heat
       target:
-        device_id: b2361f33be6a562214be368551925275
+        device_id:
+        - 5c78c99d1637fbdead9867a7f0aa1ab5
+      action: climate.set_temperature
   mode: single
 - id: '1582481700739'
   alias: 'Home: Set overnight heating'
@@ -716,6 +711,11 @@
     entity_id: 123980784a66dfd24b7aa21745858530
     domain: binary_sensor
     trigger: device
+  - type: occupied
+    device_id: f23441f0950749375ec3a64800b2ca23
+    entity_id: 902d8702aaafda4192d278e1d3a45080
+    domain: binary_sensor
+    trigger: device
   conditions:
   - condition: and
     conditions:
@@ -1068,13 +1068,13 @@
 - id: '1622999279520'
   alias: 'Home: Notify when leaving home and window open'
   description: When no one home alert if window open
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - group.family
     from: home
     to: not_home
-  condition:
+    trigger: state
+  conditions:
   - condition: and
     conditions:
     - condition: state
@@ -1083,8 +1083,8 @@
     - condition: state
       entity_id: input_boolean.visitor_mode
       state: 'off'
-  action:
-  - service: notify.mobile_app_nbiphone
+  actions:
+  - action: notify.all_phones
     data:
       message: There is a window open!
   mode: single
@@ -2246,35 +2246,6 @@
     data:
       message: Someone’s at the front door
   mode: single
-- id: '1670158189322'
-  alias: 'Home: Turn on Living room heating'
-  description: ''
-  trigger:
-  - type: temperature
-    platform: device
-    device_id: 0d1e6e190a95cf41e565f304d0b3b17e
-    entity_id: sensor.living_room_temperature_temperature
-    domain: sensor
-    below: 21
-  condition:
-  - condition: sun
-    before: sunset
-    before_offset: '-1:00:00'
-  - condition: or
-    conditions:
-    - condition: state
-      state: home
-      entity_id: group.family
-    - condition: state
-      entity_id: input_boolean.visitor_mode
-      state: 'on'
-  action:
-  - service: climate.turn_on
-    data: {}
-    target:
-      device_id:
-      - b2361f33be6a562214be368551925275
-  mode: single
 - id: '1671549822557'
   alias: 'Home: Morning routine'
   description: ''
@@ -3251,8 +3222,7 @@
     after: 07:00:00
     before: '23:00:00'
   actions:
-  - action: notify.all_phones
-    metadata: {}
+  - action: notify.notify
     data:
       message: Garden motion detected
   mode: single
