@@ -728,6 +728,13 @@
       entity_id: sensor.garden_motion_illuminance_lux
       domain: sensor
       below: 120
+  - condition: state
+    entity_id: sensor.landing_button_action
+    state: release
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
   actions:
   - data: {}
     target:
@@ -931,49 +938,49 @@
 - id: '1607178075226'
   alias: xmas - enable
   description: ''
-  trigger:
-  - platform: time
-    at: 08:00
-  - platform: state
-    entity_id:
+  triggers:
+  - at: 08:00
+    trigger: time
+  - entity_id:
     - group.family
     to: home
     from: not_home
-  condition:
+    trigger: state
+  conditions:
   - condition: state
     entity_id: input_boolean.christmas
     state: 'on'
-  action:
-  - service: switch.turn_on
-    data: {}
+  actions:
+  - data: {}
     target:
       device_id:
       - cf9c37806c0911f3b3378fe7b92dcb30
-      - bd5b0a18871cd8c3aeeba83e04141732
+      - 9ce140c7282a490510aeab494eb8d721
+    action: switch.turn_on
   mode: single
 - id: '1607178260716'
   alias: xmas - disable
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - group.family
     to: not_home
-  - platform: time
-    at: '23:00'
-  condition:
+    trigger: state
+  - at: '23:00'
+    trigger: time
+  conditions:
   - condition: device
     type: is_off
     device_id: d127ff74d8af72a55f749dcac95abb05
     entity_id: remote.sony_bravia_tv
     domain: remote
-  action:
-  - service: switch.turn_off
-    data: {}
+  actions:
+  - data: {}
     target:
       device_id:
       - cf9c37806c0911f3b3378fe7b92dcb30
-      - bd5b0a18871cd8c3aeeba83e04141732
+      - 9ce140c7282a490510aeab494eb8d721
+    action: switch.turn_off
   mode: single
 - id: '1608392858448'
   alias: People home
@@ -1087,58 +1094,6 @@
   - action: notify.all_phones
     data:
       message: There is a window open!
-  mode: single
-- id: '1624187040607'
-  alias: 'Living Room: Lights off if no movement (night)'
-  description: ''
-  trigger:
-  - type: no_motion
-    platform: device
-    device_id: f23441f0950749375ec3a64800b2ca23
-    entity_id: binary_sensor.living_room_motion_occupancy
-    domain: binary_sensor
-  condition:
-  - condition: sun
-    before: sunrise
-  - condition: time
-    after: '23:00:00'
-    before: 07:00:00
-  - condition: or
-    conditions:
-    - condition: device
-      type: is_off
-      device_id: bdd5789398b34768be0205438ce3bf75
-      entity_id: switch.tv_plug
-      domain: switch
-    - condition: device
-      device_id: d127ff74d8af72a55f749dcac95abb05
-      domain: media_player
-      entity_id: media_player.sony_bravia_tv
-      type: is_off
-  - condition: device
-    type: is_off
-    device_id: 4a1c24755d492e6f3e5f26a026699faf
-    entity_id: light.living_room_light
-    domain: light
-  action:
-  - service: light.turn_off
-    target:
-      device_id:
-      - d928058060675d2313bf704f0d6fc489
-    data:
-      transition: 0
-  - data: {}
-    entity_id: input_boolean.frontroomlamp_auto
-    service: input_boolean.turn_off
-  - if:
-    - condition: state
-      entity_id: input_boolean.christmas
-      state: 'on'
-    then:
-    - service: switch.turn_off
-      data: {}
-      target:
-        entity_id: switch.christmas_lights
   mode: single
 - id: '1629535681579'
   alias: 'Living Room: clientViewing tag is scanned'
@@ -1985,59 +1940,20 @@
 - id: '1662555322290'
   alias: 'Home: Night time settings'
   description: ''
-  trigger:
-  - platform: time
-    at: 00:00:00
-  condition:
-  - condition: state
-    entity_id: input_boolean.visitor_mode
-    state: 'off'
-    enabled: false
-  action:
-  - if:
-    - condition: device
-      type: is_off
-      device_id: d127ff74d8af72a55f749dcac95abb05
-      entity_id: remote.sony_bravia_tv
-      domain: remote
-    then:
-    - service: switch.turn_off
-      data: {}
-      target:
-        device_id:
-        - bdd5789398b34768be0205438ce3bf75
-    enabled: false
+  triggers:
+  - at: 00:00:00
+    trigger: time
+  conditions: []
+  actions:
   - if:
     - condition: state
       entity_id: input_boolean.christmas
       state: 'on'
     then:
-    - service: switch.turn_off
-      data: {}
+    - data: {}
       target:
         entity_id: switch.christmas_lights
-  mode: single
-- id: '1662555681806'
-  alias: 'Home: Day time settings'
-  description: ''
-  trigger:
-  - platform: time
-    at: '11:00:00'
-  condition:
-  - condition: state
-    entity_id: input_boolean.visitor_mode
-    state: 'on'
-  - condition: device
-    type: is_off
-    device_id: bdd5789398b34768be0205438ce3bf75
-    entity_id: switch.tv_plug
-    domain: switch
-  action:
-  - service: switch.turn_on
-    data: {}
-    target:
-      device_id:
-      - bdd5789398b34768be0205438ce3bf75
+      action: switch.turn_off
   mode: single
 - id: '1662794628456'
   alias: 'Home: Reset switches'
@@ -2914,94 +2830,37 @@
 - id: '1713171436548'
   alias: 'Hallway: Front doorbell pressed'
   description: ''
-  trigger:
-  - type: occupied
-    platform: device
-    device_id: 72fac737a69e0dc4de9b5c447c57c067
-    entity_id: 8504c25a20f0333779e42fc9e9ee6b89
-    domain: binary_sensor
-  condition: []
-  action:
-  - service: notify.all_phones
-    metadata: {}
+  triggers:
+  - trigger: state
+    entity_id:
+    - event.front_door_ding
+    to:
+  conditions: []
+  actions:
+  - metadata: {}
     data:
       message: Someone at the door
+    action: notify.all_phones
   mode: single
 - id: '1714319495999'
   alias: 'Living Room: Power on TV'
   description: Using cube
-  trigger:
-  - platform: device
-    domain: mqtt
+  triggers:
+  - domain: mqtt
     device_id: 51469996b70f94a54dfab49de0d1a05d
     type: action
     subtype: flip90
-  condition:
+    trigger: device
+  conditions:
   - condition: state
     entity_id: sensor.nic_s_cube_side
     state: '5'
-  action:
-  - if:
-    - condition: device
-      type: is_off
-      device_id: bdd5789398b34768be0205438ce3bf75
-      entity_id: dada81c0e1d3e0f42ccd2f548a3952f1
-      domain: switch
-    then:
-    - type: turn_on
-      device_id: bdd5789398b34768be0205438ce3bf75
-      entity_id: dada81c0e1d3e0f42ccd2f548a3952f1
-      domain: switch
-    - service: remote.turn_on
-      metadata: {}
-      data: {}
-      target:
-        device_id:
-        - 3f966264f0d26f2d6ee177196651085b
-      enabled: false
-    - delay:
-        hours: 0
-        minutes: 1
-        seconds: 10
-        milliseconds: 0
-      enabled: false
-  - service: media_player.turn_on
-    metadata: {}
+  actions:
+  - metadata: {}
     data: {}
     target:
       device_id: 3f966264f0d26f2d6ee177196651085b
-  mode: single
-- id: '1714338539870'
-  alias: 'Living Room: Turn off TV plug'
-  description: ''
-  trigger:
-  - platform: device
-    device_id: d127ff74d8af72a55f749dcac95abb05
-    domain: media_player
-    entity_id: 1f957fbecb35ed00baaf61cbd50998f5
-    type: turned_off
-    for:
-      hours: 0
-      minutes: 30
-      seconds: 0
-  - platform: device
-    type: turned_off
-    device_id: d127ff74d8af72a55f749dcac95abb05
-    entity_id: 8fe9052ad5a27da7d65ecb4bdf683657
-    domain: remote
-    for:
-      hours: 0
-      minutes: 30
-      seconds: 0
-  condition:
-  - condition: state
-    entity_id: input_boolean.visitor_mode
-    state: 'off'
-  action:
-  - type: turn_off
-    device_id: bdd5789398b34768be0205438ce3bf75
-    entity_id: dada81c0e1d3e0f42ccd2f548a3952f1
-    domain: switch
+    action: media_player.turn_on
   mode: single
 - id: '1714581756478'
   alias: 'Studio: Toggle Lamp'
@@ -3314,4 +3173,40 @@
     metadata: {}
     data:
       message: There is motion at the back bedroom window
+  mode: single
+- id: '1734348771963'
+  alias: 'Studio: Restart print server'
+  description: ''
+  triggers:
+  - type: not_connected
+    device_id: ce8c259e190e46214bf6e32f0a941def
+    entity_id: 7b4a6a4cbb59fcda2008586d3c6c4980
+    domain: binary_sensor
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  conditions: []
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      device_id: bdd5789398b34768be0205438ce3bf75
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      device_id: bdd5789398b34768be0205438ce3bf75
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 25
+      milliseconds: 0
   mode: single
