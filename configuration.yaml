@@ -21,7 +21,10 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 
 adaptive_lighting:
-  
+
+device_tracker:
+  - platform: bluetooth_le_tracker
+
 zone:
   - name: Home
     latitude: 51.441581
