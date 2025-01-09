@@ -58,9 +58,8 @@
 - id: '1582058135722'
   alias: 'Viewing room: light off if no one there'
   description: ''
-  trigger:
+  triggers:
   - type: not_occupied
-    platform: device
     device_id: bf9d6b08c263d2084dd7b66b4a5bd82e
     entity_id: binary_sensor.occupancy
     domain: binary_sensor
@@ -68,12 +67,14 @@
       hours: 0
       minutes: 3
       seconds: 0
-  condition: []
-  action:
+    trigger: device
+  conditions: []
+  actions:
   - data: {}
     target:
       device_id:
       - 00cd6d38ebbb9e44e6c3419bcdb66c4e
+      - d39923db4b53a1dda092d3f9e9e66dd3
     action: light.turn_off
   mode: single
 - id: '1582235724050'
@@ -605,21 +606,20 @@
     - type: is_illuminance
       condition: device
       device_id: 5dd737db95f79d9c04acf4c60b28ac93
-      entity_id: sensor.garden_motion_illuminance_lux
+      entity_id: f29239dc648a15cd3f6a790360ea8a92
       domain: sensor
-      below: 120
+      below: 70
   actions:
   - data: {}
-    target:
-      device_id: 943822b0a57e615f77fd0b34e041467a
     action: light.turn_on
+    target:
+      entity_id: light.hallway_light_2
   mode: single
 - id: '1598533309311'
   alias: 'Hallway: Turn off if no motion'
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.all_hallway_motion
     to: 'off'
     from: 'on'
@@ -627,7 +627,8 @@
       hours: 0
       minutes: 1
       seconds: 30
-  condition:
+    trigger: state
+  conditions:
   - condition: and
     conditions:
     - condition: state
@@ -641,11 +642,11 @@
     - condition: state
       entity_id: input_boolean.visitor_mode
       state: 'off'
-  action:
-  - service: light.turn_off
-    data: {}
+  actions:
+  - data: {}
+    action: light.turn_off
     target:
-      device_id: 943822b0a57e615f77fd0b34e041467a
+      entity_id: light.hallway_light_2
   mode: single
 - id: '1598898669207'
   alias: 'Home: Alarmed - Lights on'
@@ -725,30 +726,22 @@
     - type: is_illuminance
       condition: device
       device_id: 5dd737db95f79d9c04acf4c60b28ac93
-      entity_id: sensor.garden_motion_illuminance_lux
+      entity_id: f29239dc648a15cd3f6a790360ea8a92
       domain: sensor
-      below: 120
-  - condition: state
-    entity_id: sensor.landing_button_action
-    state: release
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 30
+      below: 70
   actions:
   - data: {}
     target:
       device_id:
-      - a94a999f4e1d4b03fc61756153538c57
       - 0eb92d3c8641e653d9dbd75084fb7aac
+      entity_id: light.landing_light
     action: light.turn_on
   mode: single
 - id: '1599823458331'
   alias: 'Landing: Light off when no motion'
   description: ''
-  trigger:
+  triggers:
   - type: not_occupied
-    platform: device
     device_id: 9755de96e4654fa2277199334e0ae807
     entity_id: 123980784a66dfd24b7aa21745858530
     domain: binary_sensor
@@ -756,16 +749,17 @@
       hours: 0
       minutes: 0
       seconds: 15
-  condition:
+    trigger: device
+  conditions:
   - condition: state
     entity_id: input_boolean.landing_switch
     state: 'off'
-  action:
+  actions:
   - data: {}
     target:
       device_id:
-      - a94a999f4e1d4b03fc61756153538c57
       - 0eb92d3c8641e653d9dbd75084fb7aac
+      entity_id: light.landing_light
     action: light.turn_off
   mode: single
 - id: '1601055413127'
@@ -1506,15 +1500,15 @@
 - id: '1651834448521'
   alias: 'Bedroom: Nic''s lamp toggle'
   description: ''
-  trigger:
-  - platform: device
-    domain: mqtt
+  triggers:
+  - domain: mqtt
     device_id: 014a1f0513ebc4b5e57d6ae04840959f
     type: action
     subtype: release
     discovery_id: 0x0017880108938a4c action_release
-  condition: []
-  action:
+    trigger: device
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: time
@@ -1524,14 +1518,17 @@
         device_id: e225c14b95c3725efe3b283b7cada979
         entity_id: light.nic_s_lamp
         domain: light
+      - condition: state
+        entity_id: input_boolean.nic_s_button_hold
+        state: 'off'
       sequence:
-      - service: light.turn_on
-        data:
+      - data:
           brightness_pct: 10
           color_temp: 410
         target:
           device_id:
           - e225c14b95c3725efe3b283b7cada979
+        action: light.turn_on
     - conditions:
       - condition: time
         after: 07:00:00
@@ -1540,26 +1537,32 @@
         device_id: e225c14b95c3725efe3b283b7cada979
         entity_id: light.nic_s_lamp
         domain: light
+      - condition: state
+        entity_id: input_boolean.nic_s_button_hold
+        state: 'off'
       sequence:
-      - service: light.turn_on
-        data:
+      - data:
           brightness_pct: 10
           color_temp: 411
         target:
           device_id:
           - e225c14b95c3725efe3b283b7cada979
+        action: light.turn_on
     - conditions:
       - condition: device
         type: is_on
         device_id: e225c14b95c3725efe3b283b7cada979
         entity_id: light.nic_s_lamp
         domain: light
+      - condition: state
+        entity_id: input_boolean.nic_s_button_hold
+        state: 'off'
       sequence:
-      - service: light.turn_off
-        data: {}
+      - data: {}
         target:
           device_id:
           - e225c14b95c3725efe3b283b7cada979
+        action: light.turn_off
       - if:
         - condition: device
           type: is_off
@@ -1567,24 +1570,29 @@
           entity_id: light.jo_s_lamp
           domain: light
         then:
-        - service: timer.start
-          data: {}
+        - data: {}
           target:
             entity_id: timer.fan_countdown
-    default: []
+          action: timer.start
+    default:
+    - action: input_boolean.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.nic_s_button_hold
   mode: single
 - id: '1651836401466'
   alias: 'Bedroom 2: lamps toggle'
   description: ''
-  trigger:
-  - platform: device
-    domain: mqtt
+  triggers:
+  - domain: mqtt
     device_id: 08d0372a9d255465f712a9a557cfea82
     type: action
     subtype: release
     discovery_id: 0x0017880108028063 action_release
-  condition: []
-  action:
+    trigger: device
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: time
@@ -1596,12 +1604,12 @@
         entity_id: light.bedroom_2_lamp_left
         domain: light
       sequence:
-      - service: light.toggle
-        target:
+      - target:
           device_id:
-          - 5e22506b6919deb4614f9dbd27689d28
+          - b38f097567ed18b2b191dcdcbe08933b
         data:
-          transition: 1
+          transition: 0.5
+        action: light.toggle
     - conditions:
       - condition: time
         after: '22:00'
@@ -1612,19 +1620,19 @@
         entity_id: light.bedroom_2_lamp_left
         domain: light
       sequence:
-      - service: light.turn_off
-        target:
+      - target:
           device_id:
           - b38f097567ed18b2b191dcdcbe08933b
-        data: {}
+        data:
+          transition: 0.5
+        action: light.turn_off
     default:
-    - service: light.toggle
-      target:
+    - target:
         device_id:
         - b38f097567ed18b2b191dcdcbe08933b
-        - 5e22506b6919deb4614f9dbd27689d28
       data:
-        transition: 1
+        transition: 0.5
+      action: light.toggle
   mode: single
 - id: '1651843620771'
   alias: 'Viewing Room: Toggle light'
@@ -1674,8 +1682,8 @@
   - data: {}
     target:
       device_id:
-      - a94a999f4e1d4b03fc61756153538c57
       - 0eb92d3c8641e653d9dbd75084fb7aac
+      entity_id: light.landing_light
     action: light.toggle
   mode: single
 - id: '1651854672062'
@@ -1958,56 +1966,35 @@
 - id: '1662794628456'
   alias: 'Home: Reset switches'
   description: ''
-  trigger:
-  - platform: device
-    type: turned_off
-    device_id: a94a999f4e1d4b03fc61756153538c57
-    entity_id: light.hallway_light
-    domain: light
-  - platform: device
-    type: turned_off
-    device_id: 943822b0a57e615f77fd0b34e041467a
-    entity_id: light.landing_light
-    domain: light
-  - platform: device
-    type: turned_off
-    device_id: a6f6615c257b840eb22de7c5e514ed0d
-    entity_id: light.office_light
-    domain: light
-  - platform: device
-    type: turned_off
-    device_id: 4a1c24755d492e6f3e5f26a026699faf
-    entity_id: light.living_room_light
-    domain: light
-  condition: []
-  action:
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.hallway_light_2
+    to: 'off'
+  - trigger: state
+    entity_id:
+    - light.landing_light
+    to: 'off'
+  conditions: []
+  actions:
   - if:
     - condition: state
       entity_id: input_boolean.landing_switch
       state: 'on'
     then:
-    - service: input_boolean.turn_off
-      data: {}
+    - data: {}
       target:
         entity_id: input_boolean.landing_switch
+      action: input_boolean.turn_off
   - if:
     - condition: state
       entity_id: input_boolean.hallway_switch
       state: 'on'
     then:
-    - service: input_boolean.turn_off
-      data: {}
+    - data: {}
       target:
         entity_id: input_boolean.hallway_switch
-  - if:
-    - condition: state
-      entity_id: input_boolean.office_switch
-      state: 'on'
-    then:
-    - service: input_boolean.turn_off
-      data: {}
-      target:
-        entity_id: input_boolean.office_switch
+      action: input_boolean.turn_off
   mode: single
 - id: '1663580557071'
   alias: 'Living Room: Play/pause music when cube shaken'
@@ -2325,16 +2312,16 @@
       device_id: e2bc18379601da5dca79d9d37c0c15e8
   mode: single
 - id: '1681738014167'
-  alias: 'Office: Play/pause music'
+  alias: 'Viewing Room: Play/pause music'
   description: ''
-  trigger:
-  - platform: device
-    domain: mqtt
+  triggers:
+  - domain: mqtt
     device_id: 00cd6d38ebbb9e44e6c3419bcdb66c4e
     type: action
     subtype: single_left
-  condition: []
-  action:
+    trigger: device
+  conditions: []
+  actions:
   - if:
     - condition: device
       device_id: 73252333f17bdea4b67aad3057318f21
@@ -2498,13 +2485,6 @@
   - condition: state
     entity_id: input_boolean.visitor_mode
     state: 'off'
-  - type: is_illuminance
-    condition: device
-    device_id: 1d2981c0871b3ba69d8f0b5d7377d611
-    entity_id: 04ecb25c72f7e53c3c5a935a4547636e
-    domain: sensor
-    below: 70
-    enabled: false
   actions:
   - if:
     - condition: device
@@ -2556,26 +2536,25 @@
 - id: '1700584411012'
   alias: 'Hallway: Turn on light when front door opened'
   description: If low light or evening
-  trigger:
+  triggers:
   - type: opened
-    platform: device
     device_id: 6ed7ece87b002c7e9536c8810954532d
     entity_id: 8b9347e42467241e1a2de5b2dfa13dbd
     domain: binary_sensor
-  condition: []
-  action:
-  - if:
-    - type: is_illuminance
-      condition: device
-      device_id: 5dd737db95f79d9c04acf4c60b28ac93
-      entity_id: 4633a7c28934bbcf00b194a9488c773c
-      domain: sensor
-      below: 50
-    then:
-    - service: light.turn_on
-      data: {}
-      target:
-        entity_id: light.hallway_light_2
+    trigger: device
+  conditions:
+  - type: is_illuminance
+    condition: device
+    device_id: 5dd737db95f79d9c04acf4c60b28ac93
+    entity_id: f29239dc648a15cd3f6a790360ea8a92
+    domain: sensor
+    below: 70
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.hallway_light_2
   mode: single
 - id: '1700585236622'
   alias: 'Hallway: Front door Ring battery level low'
@@ -3021,14 +3000,14 @@
 - id: '1725805665645'
   alias: 'The Box Office: Toggle auto desk light'
   description: ''
-  trigger:
-  - platform: device
-    domain: mqtt
+  triggers:
+  - domain: mqtt
     device_id: a4b8c4032b2b0dacff1c4d62e9bf0829
     type: action
     subtype: double_left
-  condition: []
-  action:
+    trigger: device
+  conditions: []
+  actions:
   - action: automation.toggle
     target:
       entity_id:
@@ -3038,8 +3017,8 @@
     - condition: device
       type: is_on
       device_id: 399c5c888afdb3c9dffcd4b838cd573d
-      entity_id: 1214295ce67a9ec4bc50d0727702b8d6
-      domain: light
+      entity_id: 593f1a86c45bf98bd5bd487234ca2103
+      domain: switch
     then:
     - action: light.turn_off
       metadata: {}
@@ -3108,15 +3087,6 @@
   description: ''
   triggers:
   - type: turned_on
-    device_id: a94a999f4e1d4b03fc61756153538c57
-    entity_id: 07ba2e065b8a0474246b19c440089c63
-    domain: light
-    trigger: device
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 2
-  - type: turned_on
     device_id: 943822b0a57e615f77fd0b34e041467a
     entity_id: 718f7b50d23b378bcf4a83f59261eb06
     domain: light
@@ -3134,18 +3104,27 @@
       hours: 0
       minutes: 0
       seconds: 2
+  - trigger: state
+    entity_id:
+    - light.landing_light
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
   conditions: []
   actions:
   - action: adaptive_lighting.apply
     metadata: {}
     data:
       lights:
-      - light.hallway_light
+      - light.hallway_light_2
       - light.landing_light
       - light.bathroom_landing_light
       adapt_brightness: true
       adapt_color: true
       transition: '2'
+      entity_id: switch.adaptive_lighting_stairs
   mode: single
 - id: '1731762208284'
   alias: 'Bedroom 2: Window motion detected'
@@ -3209,4 +3188,92 @@
       minutes: 0
       seconds: 25
       milliseconds: 0
+  mode: single
+- id: '1735489767995'
+  alias: 'Bedroom: Adaptive lights'
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    minutes: /10
+  conditions:
+  - condition: device
+    type: is_on
+    device_id: e225c14b95c3725efe3b283b7cada979
+    entity_id: 816602e31d2cca7799dbbcbc7839b004
+    domain: light
+  actions:
+  - action: adaptive_lighting.apply
+    metadata: {}
+    data:
+      entity_id: switch.adaptive_lighting_adapt_brightness_bedroom_lamps
+      lights:
+      - light.nic_s_lamp
+      transition: '1'
+      adapt_brightness: false
+      adapt_color: false
+  mode: single
+- id: '1735754322934'
+  alias: 'Bedroom: Nic''s lamp brightness'
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 014a1f0513ebc4b5e57d6ae04840959f
+    type: action
+    subtype: hold
+    trigger: device
+  conditions: []
+  actions:
+  - if:
+    - condition: device
+      type: is_on
+      device_id: 1298ba84079df8707a2e28005e9afc1c
+      entity_id: 92315213616018e785361afa59c9e5b5
+      domain: light
+    then:
+    - if:
+      - condition: numeric_state
+        entity_id: light.nic_s_lamp
+        attribute: brightness
+        below: 250
+      then:
+      - metadata: {}
+        data:
+          brightness_step_pct: 10
+        target:
+          device_id:
+          - e225c14b95c3725efe3b283b7cada979
+        action: light.turn_on
+      else:
+      - metadata: {}
+        data:
+          brightness_pct: 10
+        target:
+          device_id:
+          - e225c14b95c3725efe3b283b7cada979
+        action: light.turn_on
+  - target:
+      entity_id:
+      - input_boolean.nic_s_button_hold
+    data: {}
+    action: input_boolean.turn_on
+  mode: single
+- id: '1735837364456'
+  alias: 'Viewing Room: Turn on lamp when occupied'
+  description: ''
+  triggers:
+  - type: occupied
+    device_id: bf9d6b08c263d2084dd7b66b4a5bd82e
+    entity_id: 65aa3587caefba7e134c5cb8059cdaae
+    domain: binary_sensor
+    trigger: device
+  conditions:
+  - condition: state
+    entity_id: group.family
+    state: home
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      device_id: d39923db4b53a1dda092d3f9e9e66dd3
   mode: single
